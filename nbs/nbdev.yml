@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "cdBoundary"
+  site-url: "https://civildot.github.io/cdBoundary"
+  description: "Concave hull by distance"
+  repo-branch: main
+  repo-url: "https://github.com/civildot/cdBoundary"
