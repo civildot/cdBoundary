@@ -23,4 +23,6 @@ d = { 'settings': { 'branch': 'main',
                                                                                       'cdBoundary/boundary.py')},
             'cdBoundary.core': {'cdBoundary.core.foo': ('core.html#foo', 'cdBoundary/core.py')},
             'cdBoundary.fileio': { 'cdBoundary.fileio.FileIO': ('fileio.html#fileio', 'cdBoundary/fileio.py'),
-                                   'cdBoundary.fileio.FileIO.__init__': ('fileio.html#fileio.__init__', 'cdBoundary/fileio.py')}}}
+                                   'cdBoundary.fileio.FileIO.__init__': ('fileio.html#fileio.__init__', 'cdBoundary/fileio.py'),
+                                   'cdBoundary.fileio.FileIO.file2points': ('fileio.html#fileio.file2points', 'cdBoundary/fileio.py'),
+                                   'cdBoundary.fileio.FileIO.write2file': ('fileio.html#fileio.write2file', 'cdBoundary/fileio.py')}}}
