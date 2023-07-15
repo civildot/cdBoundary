@@ -16,6 +16,8 @@ from shapely.ops import linemerge
 
 # %% ../nbs/00_Boundary.ipynb 4
 class ConcaveHull:
+    
+    'Calculate the concave hull of a collection of points.'
 
     def __init__(self):
         self.triangles = dict()
@@ -52,7 +54,7 @@ class ConcaveHull:
 
     def loadpoints(self, points: list) -> None:
 
-        ''' Point format: [[x1, y1], [x2, y2], [x3, y3], ...]
+        ''' Point format: [[x1, y1], [x2, y2], [x3, y3], ...]  
                           or [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3], ...]'''
         self.points = points
         
@@ -123,6 +125,16 @@ class ConcaveHull:
 
 
     def calculatehull(self, tol: float=50) -> None:
+
+        '''Calculates the concave hull
+        
+                Parameters:
+                    tol (float) : All border edges longer than this parameter will be
+                                  attempted to be removed.
+        
+                Returns:
+                    None
+        '''
         
         self.tol = tol
 
@@ -196,12 +208,12 @@ class ConcaveHull:
     def estimate(self, perc: float=92.5) -> float:
 
         ''' Gives an estimate of the val to be used in `tol` for `calculatehull`
-            to yeild a nice looking concave hull
+            to yeild a nice looking concave hull  
 
-                Parameters:
+                Parameters:  
                     perc (float) : Number between 0 and 100
 
-                Returns:
+                Returns:  
                     (float) : Suggested value to use as `tol` in
                               `calculatehull`
         '''
@@ -223,14 +235,27 @@ class ConcaveHull:
 
     def boundary_points(self) -> list:
 
-        '''Returns a list of the boundary points'''
+        '''Returns a list of the boundary points
+        
+                Parameters:  
+                    None
+
+                Returns:  
+                    (list) : List of coordinates of the pints on the hull boundary
+        '''
         
         return list(self.hull.exterior.coords)
 
 
-    def plot(self, figsize: int=5):
+    def plot(self, figsize: float=5):
 
-        '''Plot the points and the concave hull'''
+        '''Plot the points and the concave hull 
+        
+                Parameters:  
+                    figsize(float) : The figure size in inches. The apsect ratio
+                                     is set to 1. The x or y axis of your plot will
+                                     be adjusted accordingly.
+        '''
 
         ratio = 1
         fig = plt.figure(figsize=(figsize,figsize))

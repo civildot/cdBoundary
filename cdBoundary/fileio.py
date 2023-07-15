@@ -31,12 +31,24 @@ class FileIO(ConcaveHull):
 
     def file2points(self, infile:str, inlayer: str=None):
 
-        ''' Todo: Provide option to breakdown LineStrings and Polygon
-                  to points. Do I need to check for point duplication?
-                  Easy, but will require a new dependency, `rtree`. 
+        ''' 
+        Reads a file with a format supported by Fiona. Extracts all the points
+        and add it to the point list.
+
+            Parameters:
+                infile (str)  : The file name
+                inlayer (str) : The layer in the file where applicable
+    
+            Returns:
+                None
+        
+        Todo: Provide option to breakdown LineStrings and Polygon
+              to points. Do I need to check for point duplication?
+              Easy, but will require a new dependency, `rtree`. 
                   
-                  def file2points(self, infile:str, inlayer: str=None, 
-                                  allgeometries: bool=False):'''
+               def file2points(self, infile:str, inlayer: str=None, 
+                               allgeometries: bool=False):
+        '''
         
         self.infile = infile
         
@@ -59,11 +71,34 @@ class FileIO(ConcaveHull):
                             self.points.append([pt.x, pt.y])
                     
 
-    def write2file(self, outfile: str=None, outlayer: str=None,
+    def write2file(self, outfile: str=None, outlayer: str=None, 
                    driver:str = None, crs: str=None, 
                    perc: float=None, tol: float=None):
-
-        ''' Write the concave hull polygon to a file. '''
+                       
+        '''
+         Write the concave hull polygon to a file. 
+        
+                Parameters:
+                    outfile (str) : The file name of the output file. If not specified
+                                    it will be named `concave_hull`  
+                    outlayer (str): The name of the layer in the output file where
+                                    applicable  
+                    driver (str)  : See table above on possible driver options
+                                    Only drivers with `w` in the mode can be used.
+                                    Drivers other than the 'mainstream' my vary in
+                                    success.  
+                    crs (str)     : the coordinate reference system in WKT format.
+                                    Not essential  
+                    perc (float)  : Will calculate the concave hull using this
+                                    percentile on the triangle edges. See the
+                                    `estimate` method in `ConcaveHull`.  
+                    tol (float)   : Will calculate the concave hull using this
+                                    length tolerance. See the `calculatehull` method
+                                    in `ConcaveHull`.  
+    
+                Returns:
+                     None
+        '''
 
         if perc is not None:
             self.calculatehull(tol=fch.estimate(perc=perc))
