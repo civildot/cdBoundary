@@ -6,7 +6,7 @@ A very fast 2.5D **concave hull** algorithm by distance implemented in
 Python.
 
 Rather than using a factor between 0 and 1 as most *Concave Hull* or
-*Alpha Shape* algorithms this implementation uses *maximum edgle length*
+*Alpha Shape* algorithms this implementation uses *maximum edge length*
 (`tol`) as a paramater.
 
 The library was needed specific for *survey* or *LiDAR* data for
@@ -163,5 +163,5 @@ very few using maximum edge length as an argument.
     in 1988. It has an `estimate` button which inspired the `estimate`
     function for cdBoundary.
 4.  **[jtsop](https://github.com/locationtech/jts/blob/master/doc/JTSOp.md)**
-    from *JTS* (Java Topology Suite) has got a
+    from the *JTS* (Java Topology Suite) has got a
     `Construction.concaveHullByLen` function as well.
