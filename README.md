@@ -15,9 +15,7 @@ engineering applications.
 ## Install
 
 ``` sh
-git clone https://github.com/civildot/cdBoundary
-cd cdBoundary
-python setup.py install
+pip install cdBoundary
 ```
 
 ## Usage
