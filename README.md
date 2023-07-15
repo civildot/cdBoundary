@@ -43,7 +43,7 @@ ch = ConcaveHull()
 with open('../examples/points-1k.json') as source:
     pts = json.load(source)
 ch.loadpoints(pts)
-ch.calculatehull(tol=0.002)
+ch.calculatehull(tol=0.0025)
 ```
 
 The result is a `shapely` Polygon at `ch.hull`.
@@ -62,9 +62,15 @@ for i in range(5):
     The first 5 coordinates of the concave hull is:
     1.(-122.08441, 37.384634)
     2.(-122.0832, 37.383161)
-    3.(-122.0822, 37.381746)
-    4.(-122.08214, 37.3812)
-    5.(-122.08204, 37.380184)
+    3.(-122.08214, 37.3812)
+    4.(-122.08204, 37.380184)
+    5.(-122.08216, 37.379173)
+
+``` python
+ch.plot()
+```
+
+![](index_files/figure-commonmark/cell-4-output-1.png)
 
 If there is an uncertianty on which value to use for `tol` the
 `estimate` function can be used to provide an estimate. The default
@@ -79,7 +85,7 @@ print()
 print('There is', len(ch.boundary_points()), 'vertices on the new polygon.')
 ```
 
-    There is 124 vertices on the current polygon.
+    There is 83 vertices on the current polygon.
     The suggested value to use is 0.0017366632
 
     There is 164 vertices on the new polygon.
@@ -87,6 +93,12 @@ print('There is', len(ch.boundary_points()), 'vertices on the new polygon.')
 The low value for the `estimate()` *(much smaller than 1)* suggest that
 the coordinates are in degress. When working in feet or meters it will
 be much larger.
+
+``` python
+ch.plot()
+```
+
+![](index_files/figure-commonmark/cell-6-output-1.png)
 
 ### 2. Working directly with files
 
@@ -101,6 +113,9 @@ fch = FileIO()
 fch.file2points('../examples/Bandelierkop_survey.shp')
 fch.write2file(tol=35)
 ```
+
+In the same folder as your input file there is now a file named
+`concave_hull.shp` *(default)* containing the concave hull as a polygon.
 
 or
 
@@ -121,6 +136,7 @@ fch.write2file(outfile='../examples/concave_hull2.shp', driver='ESRI Shapefile')
 
 - [shapely](https://github.com/shapely/shapely)
 - [matplotlib](https://github.com/matplotlib/matplotlib)
+- [numpy](https://github.com/numpy/numpy)
 - [Fiona](https://github.com/Toblerity/Fiona) \>= 1.9.4
 
 ## Algorithm
@@ -135,12 +151,14 @@ available [here](http://www.geosensor.net/papers/duckham08.PR.pdf).
 Possible features or enhancements in the future. Nothing planned. The
 library is already satisfactory for our speicific application.
 
-- Output to `PNG` for quick visualization
+- ~~Plot output for quick visualization~~ *Implemented 15 July 2023*
 - ~~Support an elevation (Z value) on the polygon vertices~~
   *Implemented 15 July 2023*
 - Support for holes
 - cli (Command Line Interface)
 - Provide as a QGIS Plugin
+- Implement it as a [Streamlit](https://github.com/streamlit)
+  application
 
 ## Similar Implementations
 

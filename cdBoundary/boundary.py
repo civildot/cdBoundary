@@ -9,6 +9,7 @@ import math
 
 import numpy as np
 import matplotlib.tri as tri
+import matplotlib.pyplot as plt
 from shapely.geometry import LineString
 from shapely.geometry import Polygon
 from shapely.ops import linemerge
@@ -225,4 +226,25 @@ class ConcaveHull:
         '''Returns a list of the boundary points'''
         
         return list(self.hull.exterior.coords)
-    
+
+
+    def plot(self, figsize: int=5):
+
+        '''Plot the points and the concave hull'''
+
+        ratio = 1
+        fig = plt.figure(figsize=(figsize,figsize))
+        ax = plt.axes()
+        ax.set_aspect(ratio)
+        plt.axis('off')
+
+        x, y = list(), list()
+        for pt in self.points:
+            x.append(pt[0])
+            y.append(pt[1])
+        plt.plot(x, y, '.', color='black')
+
+        x,y = self.hull.exterior.xy
+        plt.plot(x,y, color='blue')
+
+        plt.show()

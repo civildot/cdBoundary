@@ -122,4 +122,4 @@ class FileIO(ConcaveHull):
         with fiona.open(outfile, 'w', layer=outlayer, schema=self.schema,
                         driver=self.driver, crs=self.crs) as sink:
             sink.write(rec)
-      
+
