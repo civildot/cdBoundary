@@ -45,13 +45,18 @@ class FileIO(ConcaveHull):
             self.driver = source.driver
             self.schema = source.schema
             for feat in source:
-                # Todo: Support Z
                 pt = shape(feat.geometry)
                 if pt.geom_type == 'Point':
-                    self.points.append([pt.x, pt.y])
+                    if pt.has_z:
+                        self.points.append([pt.x, pt.y, pt.z])
+                    else:
+                        self.points.append([pt.x, pt.y])
                 elif pt.geom_type == 'MultiPoint':
                     for item in list(pt.geoms):
-                        self.points.append([item.x, item.y])
+                        if pt.has_z:
+                            self.points.append([pt.x, pt.y, pt.z])
+                        else:
+                            self.points.append([pt.x, pt.y])
                     
 
     def write2file(self, outfile: str=None, outlayer: str=None,

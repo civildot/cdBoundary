@@ -30,20 +30,29 @@ class ConcaveHull:
         
         pos = triangle[1].index(-1)
         if pos==0:
-            x1, y1 = self.points[triangle[0][0]]
-            x2, y2 = self.points[triangle[0][1]]
+            x1 = self.points[triangle[0][0]][0]
+            y1 = self.points[triangle[0][0]][1]
+            x2 = self.points[triangle[0][1]][0]
+            y2 = self.points[triangle[0][1]][1]
         elif pos==1:
-            x1, y1 = self.points[triangle[0][1]]
-            x2, y2 = self.points[triangle[0][2]]
+            x1 = self.points[triangle[0][1]][0]
+            y1 = self.points[triangle[0][1]][1]
+            x2 = self.points[triangle[0][2]][0]
+            y2 = self.points[triangle[0][2]][1]
         elif pos==2:
-            x1, y1 = self.points[triangle[0][0]]
-            x2, y2 = self.points[triangle[0][2]]
+            x1 = self.points[triangle[0][0]][0]
+            y1 = self.points[triangle[0][0]][1]
+            x2 = self.points[triangle[0][2]][0]
+            y2 = self.points[triangle[0][2]][1]
         length = ((x1-x2)**2+(y1-y2)**2)**0.5
         rec = [length, key]
         return rec
         
 
     def loadpoints(self, points: list) -> None:
+
+        ''' Point format: [[x1, y1], [x2, y2], [x3, y3], ...]
+                          or [[x1, y1, z1], [x2, y2, z2], [x3, y3, z3], ...]'''
         self.points = points
         
     
@@ -71,7 +80,9 @@ class ConcaveHull:
                     
     def polygon(self):
 
-        # Todo: add Z
+        Z = False
+        if len(self.points[0]) >= 3:
+            Z = True
         
         edgelines = list()
         for i, triangle in self.triangles.items():
@@ -79,15 +90,30 @@ class ConcaveHull:
                 for pos, value in enumerate(triangle[1]):
                     if value == -1:
                         if pos==0:
-                            x1, y1 = self.points[triangle[0][0]]
-                            x2, y2 = self.points[triangle[0][1]]
+                            if not Z:
+                                x1, y1 = self.points[triangle[0][0]]
+                                x2, y2 = self.points[triangle[0][1]]
+                            else:
+                                x1, y1, z1 = self.points[triangle[0][0]]
+                                x2, y2, z2 = self.points[triangle[0][1]]
                         elif pos==1:
-                            x1, y1 = self.points[triangle[0][1]]
-                            x2, y2 = self.points[triangle[0][2]]
+                            if not Z:
+                                x1, y1 = self.points[triangle[0][1]]
+                                x2, y2 = self.points[triangle[0][2]]
+                            else:
+                                x1, y1, z1 = self.points[triangle[0][1]]
+                                x2, y2, z2 = self.points[triangle[0][2]]
                         elif pos==2:
-                            x1, y1 = self.points[triangle[0][0]]
-                            x2, y2 = self.points[triangle[0][2]]
-                        line = LineString([(x1, y1), (x2, y2)])
+                            if not Z:
+                                x1, y1 = self.points[triangle[0][0]]
+                                x2, y2 = self.points[triangle[0][2]]
+                            else:
+                                x1, y1, z1 = self.points[triangle[0][0]]
+                                x2, y2, z2 = self.points[triangle[0][2]]
+                        if not Z:
+                            line = LineString([(x1, y1), (x2, y2)])
+                        else:
+                            line = LineString([(x1, y1, z1), (x2, y2, z2)])
                         edgelines.append(line)
 
         bound = linemerge(edgelines)
@@ -184,8 +210,8 @@ class ConcaveHull:
 
         if len(self.elengths) == 0:
             for edge in self.tedges:
-                x1, y1 = self.points[edge[0]]
-                x2, y2 = self.points[edge[1]]
+                x1, y1 = self.points[edge[0]][0], self.points[edge[0]][1]
+                x2, y2 = self.points[edge[1]][0], self.points[edge[1]][1]
                 length = ((x1-x2)**2+(y1-y2)**2)**0.5
                 self.elengths.append(length)
 
