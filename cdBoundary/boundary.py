@@ -17,7 +17,7 @@ from shapely.ops import linemerge
 # %% ../nbs/00_Boundary.ipynb 4
 class ConcaveHull:
     
-    'Calculate the concave hull of a collection of points.'
+    '''Calculate the concave hull of a collection of points.'''
 
     def __init__(self):
         self.triangles = dict()

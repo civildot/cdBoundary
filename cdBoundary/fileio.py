@@ -65,10 +65,10 @@ class FileIO(ConcaveHull):
                         self.points.append([pt.x, pt.y])
                 elif pt.geom_type == 'MultiPoint':
                     for item in list(pt.geoms):
-                        if pt.has_z:
-                            self.points.append([pt.x, pt.y, pt.z])
+                        if item.has_z:
+                            self.points.append([item.x, item.y, item.z])
                         else:
-                            self.points.append([pt.x, pt.y])
+                            self.points.append([item.x, item.y])
                     
 
     def write2file(self, outfile: str=None, outlayer: str=None, 
