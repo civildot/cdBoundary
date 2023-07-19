@@ -1,0 +1,93 @@
+[
+  {
+    "objectID": "boundary.html",
+    "href": "boundary.html",
+    "title": "Boundary",
+    "section": "",
+    "text": "source"
+  },
+  {
+    "objectID": "boundary.html#usage-example",
+    "href": "boundary.html#usage-example",
+    "title": "Boundary",
+    "section": "Usage Example",
+    "text": "Usage Example\nExample of a real strip survey from on a section of road.\n\nwith open('../examples/BANDELIER8.TXT') as source:\n    points = list()\n    for i, pt in enumerate(source):\n        items = pt.split()\n        if i &lt;= 5:\n           print(items)\n        x, y, z = float(items[1]), float(items[2]), float(items[3])\n        points.append((x, y))\nprint()\nprint('Number of points in the survey:', len(points))\n\n['STN9', '88609.53', '-2573311.58', '1071.33']\n['FE1000', '88611.22', '-2573309.87', '1071.30', 'Fenline']\n['FE1001', '88612.12', '-2573310.23', '1071.40', 'Fenline']\n['FE1002', '88624.42', '-2573296.98', '1071.45', 'Fenline']\n['FE1003', '88636.30', '-2573283.87', '1070.87', 'Fenline']\n['FE1004', '88651.24', '-2573273.17', '1070.39', 'Fenline']\n\nNumber of points in the survey: 12275\n\n\nThe tol parameter in the calculatehull method is in this case expressed as metres. All boundary edges greater than this will be investigated for possible removal.\nBoundary edges longer than this can possibly remain if the the triangle has two boundary edges already. No points will be left “stranded” outside the hull.\nDepending on the input points the tol parameter can be in degrees or feet as well.\n\nch = ConcaveHull()\nch.loadpoints(points)\nch.calculatehull(tol=35)\n\nprint()\nprint('Number of points on the boundary:', len(ch.boundary_points()))\nprint()\n\n\nNumber of points on the boundary: 1675\n\nCPU times: user 301 ms, sys: 7.25 ms, total: 308 ms\nWall time: 307 ms\n\n\n\nch.plot(figsize=18)\n\n\n\n\nIf there is an uncertainty on which value to use for the tol parameter the estimate method can be used to provide a starting value.\n\nestimate = ch.estimate()\nprint(estimate)\n\n30.13064834845798\n\n\n\nch.calculatehull(tol=estimate)\n\nprint()\nprint('Number of points on the boundary:',len(ch.boundary_points()))\nprint()\n\n\nNumber of points on the boundary: 1975"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "cdBoundary",
+    "section": "",
+    "text": "A very fast 2.5D concave hull algorithm by distance implemented in Python.\nRather than using a factor between 0 and 1 as most Concave Hull or Alpha Shape algorithms this implementation uses maximum edge length (tol) as a paramater.\nThe library was needed specific for survey or LiDAR data for engineering applications."
+  },
+  {
+    "objectID": "index.html#install",
+    "href": "index.html#install",
+    "title": "cdBoundary",
+    "section": "Install",
+    "text": "Install\npip install cdBoundary"
+  },
+  {
+    "objectID": "index.html#usage",
+    "href": "index.html#usage",
+    "title": "cdBoundary",
+    "section": "Usage",
+    "text": "Usage\n\n1. As a library\nThe points should be in list format with coordinate pairs:\n[[x1, y1], [x2, y2], [x3, y3], ...] or\n[[x1, y1, z1], [x2, y2, z2], [x3, y3, z3], ...]\nAll edge lengths exceeding tol parameter will be attempted to be removed. This parameter’s unit will thus be the same as your coordinates. Wether it is meters, feet or degrees.\nThe ../examples/points-1k.json dataset was borrowed with thanks from concaveman.\n\nimport json\nfrom cdBoundary.boundary import ConcaveHull\n\nch = ConcaveHull()\nwith open('../examples/points-1k.json') as source:\n    pts = json.load(source)\nch.loadpoints(pts)\nch.calculatehull(tol=0.0025)\n\nThe result is a shapely Polygon at ch.hull.\n\nprint('Geometry type:', ch.hull.geom_type)\ncoords = ch.boundary_points()\nprint()\nprint('The first 5 coordinates of the concave hull is:')\nfor i in range(5):\n    print(i+1, '.', coords[i], sep='')\n\nGeometry type: Polygon\n\nThe first 5 coordinates of the concave hull is:\n1.(-122.08441, 37.384634)\n2.(-122.0832, 37.383161)\n3.(-122.08214, 37.3812)\n4.(-122.08204, 37.380184)\n5.(-122.08216, 37.379173)\n\n\n\nch.plot()\n\n\n\n\nIf there is an uncertianty on which value to use for tol the estimate function can be used to provide an estimate. The default percentile perc is 92.5%. At this value only outside border edges longer than 92.5% of all the edges will be attempted to be removed.\n\nprint('There is', len(coords), 'vertices on the current polygon.')\nprint('The suggested value to use is', round(ch.estimate(), 10))\nch.calculatehull(tol=ch.estimate())\nprint()\nprint('There is', len(ch.boundary_points()), 'vertices on the new polygon.')\n\nThere is 83 vertices on the current polygon.\nThe suggested value to use is 0.0017366632\n\nThere is 164 vertices on the new polygon.\n\n\nThe low value for the estimate() (much smaller than 1) suggest that the coordinates are in degress. When working in feet or meters it will be much larger.\n\nch.plot()\n\n\n\n\n\n\n2. Working directly with files\nFiona is used to read point data directly from files. The resulting Polygon can also be written to the file format supported by Fiona.\n\nfrom cdBoundary.fileio import FileIO\n\nfch = FileIO()\nfch.file2points('../examples/Bandelierkop_survey.shp')\nfch.write2file(tol=35)\n\nIn the same folder as your input file there is now a file named concave_hull.shp (default) containing the concave hull as a polygon.\nor\n\nwith open('../examples/points-1k.json') as source:\n    pts = json.load(source)\nfch = FileIO()\nfch.loadpoints(pts)\nfch.calculatehull(tol=ch.estimate())\nfch.write2file(outfile='../examples/concave_hull2.shp', driver='ESRI Shapefile')"
+  },
+  {
+    "objectID": "index.html#documentation",
+    "href": "index.html#documentation",
+    "title": "cdBoundary",
+    "section": "Documentation",
+    "text": "Documentation\nhttps://civildot.github.io/cdBoundary"
+  },
+  {
+    "objectID": "index.html#requirements-dependencies",
+    "href": "index.html#requirements-dependencies",
+    "title": "cdBoundary",
+    "section": "Requirements / Dependencies",
+    "text": "Requirements / Dependencies\n\nshapely\nmatplotlib\nnumpy\nFiona &gt;= 1.9.4"
+  },
+  {
+    "objectID": "index.html#algorithm",
+    "href": "index.html#algorithm",
+    "title": "cdBoundary",
+    "section": "Algorithm",
+    "text": "Algorithm\nThis concave hull implementation is based on the algorithm developed by Duckham et al. (2008) in the paper “Efficient generation of simple polygons for characterizing the shape of a set of points in the plane”, available here."
+  },
+  {
+    "objectID": "index.html#wish-list",
+    "href": "index.html#wish-list",
+    "title": "cdBoundary",
+    "section": "Wish list",
+    "text": "Wish list\nPossible features or enhancements in the future. Nothing planned. The library is already satisfactory for our speicific application.\n\nPlot output for quick visualization Implemented 15 July 2023\nSupport an elevation (Z value) on the polygon vertices Implemented 15 July 2023\nSupport for holes\ncli (Command Line Interface)\nProvide as a QGIS Plugin\nImplement it as a Streamlit application"
+  },
+  {
+    "objectID": "index.html#similar-implementations",
+    "href": "index.html#similar-implementations",
+    "title": "cdBoundary",
+    "section": "Similar Implementations",
+    "text": "Similar Implementations\nA lot of concave-hull and alpha-shape implementations on Github, but very few using maximum edge length as an argument.\n\nThe greatest influence on cdBoundary is http://www.rotefabrik.free.fr/concave_hull which can be accessed through the OpenJUMP user interface.\nThe lasboundary command line program from LASTools is unfortunately proprierity but also edge length as an argument and is very powerful.\nMacRoad, later HighRoad, an ancient road design and earthworks program. Still being used today but no longer actively maintained. It has a Join Edge Points function which is a concave hull implementation already implemented in 1988. It has an estimate button which inspired the estimate function for cdBoundary.\njtsop from the JTS (Java Topology Suite) has got a Construction.concaveHullByLen function as well."
+  },
+  {
+    "objectID": "fileio.html",
+    "href": "fileio.html",
+    "title": "FileIO",
+    "section": "",
+    "text": "drvdata = list()\nfor drv, modes in fiona.supported_drivers.items():\n    drvdata.append([drv, modes])\ndrvdata.sort()\n\nfor i, item in enumerate(drvdata):\n    drv = item[0]\n    extlist = list()\n    for extension in extensions(drv) or ():\n        extlist.append(extension)\n    extoptions = ''\n    for j, extension in enumerate(extlist):\n        extoptions += extension\n        if j &lt; len(extlist)-1:\n            extoptions += ', '\n    item.append(extoptions)\n    item.insert(0, (str(i+1)+'.'))\n\ncolumns = ['No', 'Driver', 'Modes', 'Extensions']\ntabulate(drvdata, headers=columns, tablefmt='html')\n#print(tabulate(drvdata, headers=columns))\n\n\n\nNo\nDriver\nModes\nExtensions\n\n\n\n\n1\nCSV\nraw\ncsv, tsv, psv\n\n\n2\nDGN\nraw\ndgn\n\n\n3\nDXF\nrw\ndxf\n\n\n4\nESRI Shapefile\nraw\nshp, dbf, shz, shp.zip\n\n\n5\nESRIJSON\nr\njson\n\n\n6\nFlatGeobuf\nraw\nfgb\n\n\n7\nGML\nrw\ngml, xml\n\n\n8\nGPKG\nraw\ngpkg, gpkg.zip\n\n\n9\nGPX\nrw\ngpx\n\n\n10\nGeoJSON\nraw\njson, geojson\n\n\n11\nGeoJSONSeq\nraw\ngeojsonl, geojsons\n\n\n12\nIdrisi\nr\nvct\n\n\n13\nMapInfo File\nraw\ntab, mif, mid\n\n\n14\nOGR_GMT\nrw\ngmt\n\n\n15\nOGR_PDS\nr\n\n\n\n16\nOpenFileGDB\nraw\ngdb\n\n\n17\nPCIDSK\nraw\npix\n\n\n18\nS57\nr\n000\n\n\n19\nSQLite\nraw\nsqlite, db\n\n\n20\nTopoJSON\nr\njson, topojson\n\n\n\n\nsource\n\n\n\n FileIO ()\n\nCalculate the concave hull of a collection of points.\n\nsource\n\n\n\n\n FileIO.file2points (infile:str, inlayer:str=None)\n\nReads a file with a format supported by Fiona. Extracts all the points and add it to the point list.\nParameters:\n    infile (str)  : The file name\n    inlayer (str) : The layer in the file where applicable\n\nReturns:\n    None\nTodo: Provide option to breakdown LineStrings and Polygon to points. Do I need to check for point duplication? Easy, but will require a new dependency, rtree.\n   def file2points(self, infile:str, inlayer: str=None, \n                   allgeometries: bool=False):\n\nsource\n\n\n\n\n FileIO.write2file (outfile:str=None, outlayer:str=None, driver:str=None,\n                    crs:str=None, perc:float=None, tol:float=None)\n\nWrite the concave hull polygon to a file.\nParameters: outfile (str) : The file name of the output file. If not specified it will be named concave_hull\noutlayer (str): The name of the layer in the output file where applicable\ndriver (str) : See table above on possible driver options Only drivers with w in the mode can be used. Drivers other than the ‘mainstream’ my vary in success.\ncrs (str) : the coordinate reference system in WKT format. Not essential\nperc (float) : Will calculate the concave hull using this percentile on the triangle edges. See the estimate method in ConcaveHull.\ntol (float) : Will calculate the concave hull using this length tolerance. See the calculatehull method in ConcaveHull.\nReturns: None"
+  },
+  {
+    "objectID": "fileio.html#supported-drivers",
+    "href": "fileio.html#supported-drivers",
+    "title": "FileIO",
+    "section": "",
+    "text": "drvdata = list()\nfor drv, modes in fiona.supported_drivers.items():\n    drvdata.append([drv, modes])\ndrvdata.sort()\n\nfor i, item in enumerate(drvdata):\n    drv = item[0]\n    extlist = list()\n    for extension in extensions(drv) or ():\n        extlist.append(extension)\n    extoptions = ''\n    for j, extension in enumerate(extlist):\n        extoptions += extension\n        if j &lt; len(extlist)-1:\n            extoptions += ', '\n    item.append(extoptions)\n    item.insert(0, (str(i+1)+'.'))\n\ncolumns = ['No', 'Driver', 'Modes', 'Extensions']\ntabulate(drvdata, headers=columns, tablefmt='html')\n#print(tabulate(drvdata, headers=columns))\n\n\n\nNo\nDriver\nModes\nExtensions\n\n\n\n\n1\nCSV\nraw\ncsv, tsv, psv\n\n\n2\nDGN\nraw\ndgn\n\n\n3\nDXF\nrw\ndxf\n\n\n4\nESRI Shapefile\nraw\nshp, dbf, shz, shp.zip\n\n\n5\nESRIJSON\nr\njson\n\n\n6\nFlatGeobuf\nraw\nfgb\n\n\n7\nGML\nrw\ngml, xml\n\n\n8\nGPKG\nraw\ngpkg, gpkg.zip\n\n\n9\nGPX\nrw\ngpx\n\n\n10\nGeoJSON\nraw\njson, geojson\n\n\n11\nGeoJSONSeq\nraw\ngeojsonl, geojsons\n\n\n12\nIdrisi\nr\nvct\n\n\n13\nMapInfo File\nraw\ntab, mif, mid\n\n\n14\nOGR_GMT\nrw\ngmt\n\n\n15\nOGR_PDS\nr\n\n\n\n16\nOpenFileGDB\nraw\ngdb\n\n\n17\nPCIDSK\nraw\npix\n\n\n18\nS57\nr\n000\n\n\n19\nSQLite\nraw\nsqlite, db\n\n\n20\nTopoJSON\nr\njson, topojson\n\n\n\n\nsource\n\n\n\n FileIO ()\n\nCalculate the concave hull of a collection of points.\n\nsource\n\n\n\n\n FileIO.file2points (infile:str, inlayer:str=None)\n\nReads a file with a format supported by Fiona. Extracts all the points and add it to the point list.\nParameters:\n    infile (str)  : The file name\n    inlayer (str) : The layer in the file where applicable\n\nReturns:\n    None\nTodo: Provide option to breakdown LineStrings and Polygon to points. Do I need to check for point duplication? Easy, but will require a new dependency, rtree.\n   def file2points(self, infile:str, inlayer: str=None, \n                   allgeometries: bool=False):\n\nsource\n\n\n\n\n FileIO.write2file (outfile:str=None, outlayer:str=None, driver:str=None,\n                    crs:str=None, perc:float=None, tol:float=None)\n\nWrite the concave hull polygon to a file.\nParameters: outfile (str) : The file name of the output file. If not specified it will be named concave_hull\noutlayer (str): The name of the layer in the output file where applicable\ndriver (str) : See table above on possible driver options Only drivers with w in the mode can be used. Drivers other than the ‘mainstream’ my vary in success.\ncrs (str) : the coordinate reference system in WKT format. Not essential\nperc (float) : Will calculate the concave hull using this percentile on the triangle edges. See the estimate method in ConcaveHull.\ntol (float) : Will calculate the concave hull using this length tolerance. See the calculatehull method in ConcaveHull.\nReturns: None"
+  },
+  {
+    "objectID": "fileio.html#example-usage",
+    "href": "fileio.html#example-usage",
+    "title": "FileIO",
+    "section": "Example Usage",
+    "text": "Example Usage\n\nFiles in the examples folder\n\nfiles = os.listdir('../examples')\nfiles.sort()\nfor file in files:\n    print(file)\n\nBANDELIER 8.dxf\nBANDELIER8.TXT\nBandelierkop_survey.cpg\nBandelierkop_survey.dbf\nBandelierkop_survey.prj\nBandelierkop_survey.qmd\nBandelierkop_survey.shp\nBandelierkop_survey.shx\npoints-1k.json\n\n\n\nfch = FileIO()\nfch.file2points('../examples/BANDELIER 8.dxf')\nfch.write2file()\n\n\nfch = FileIO()\nfch.file2points('../examples/Bandelierkop_survey.shp')\nfch.calculatehull(tol=35)\nfch.write2file()\nprint(len(fch.triangles))\nprint()\n\n15984\n\nCPU times: user 1.09 s, sys: 16.4 ms, total: 1.1 s\nWall time: 1.09 s"
+  }
+]
